@@ -104,8 +104,10 @@ print("There are two players")
 
 player_1.draw_card(deck_num_1)
 print("Player one drew a card")
-print(f"{player_1.name} has {[card.value + card.suit for card in player_1.hand]} \n"
-      f"whereas {player_2.name} has {[card.value + card.suit for card in player_2.hand]}")
+print(f"{player_1.name} has {[str(card.value) + card.suit for card in player_1.hand]} \n")
+print(f"whereas {player_2.name} has {[str(card.value) + card.suit for card in player_2.hand]}")
+for card in deck_num_1.cards:
+    print(f"This is the content of the deck: {card.value}{card.suit}")
 
  
 
