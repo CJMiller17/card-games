@@ -1,4 +1,6 @@
 import random
+import time
+import sys
 
 class Player:
     def __init__(self, name, number, turn = False, dealer = False, score = 0):
@@ -27,37 +29,41 @@ class Player:
         else:
             print("Try Again")
 
-
 class Deck:
-    def __init__(self, trump = False):
+    def __init__(self, number_of_decks=1, trump = False):
         self.trump = trump
         self.cards = []
         self.discard_pile = []
+        self.number_of_decks = number_of_decks
         self.build()
+        self.shuffle()
+        self.shuffle()
 
     def build(self):
-        for suit in ["\u2660", "\u2663", "\u2665", "\u2666"]:
-            for value in range(1, 14):
-                face_card = False 
-                if value == 1:
-                    face_card = True
-                    value = "A"
-                elif value == 11:
-                    face_card = True
-                    value = "J"
-                elif value == 12:
-                    face_card = True
-                    value = "Q"
-                elif value == 13:
-                    face_card = True
-                    value = "K"
-                self.cards.append(Card(value, suit, face_card))
+            for suit in ["\u2660", "\u2663", "\u2665", "\u2666"]:
+                for value in range(1, 14):
+                    face_card = False 
+                    if value == 1:
+                        face_card = True
+                        value = "A"
+                    elif value == 11:
+                        face_card = True
+                        value = "J"
+                    elif value == 12:
+                        face_card = True
+                        value = "Q"
+                    elif value == 13:
+                        face_card = True
+                        value = "K"
+                    self.cards.append(Card(value, suit, face_card))
 
     def shuffle(self):
         # First -1 means last card, 0 means decrementing towards 0 index, last -1 means 
         for i in range(len(self.cards)-1, 0, -1):
             random_card = random.randint(0, i)
             self.cards[i], self.cards[random_card] = self.cards[random_card], self.cards[i]
+
+    def build_
 
     def draw_from_deck(self):
         #Pop acts as the top of the deck because it removes from the last item
@@ -74,7 +80,6 @@ class Deck:
 
     def add_to_discard(self, card):
         self.discard_pile.append(card)
-
         
 class Card:
     def __init__(self, value, suit, face_card = False):
@@ -92,24 +97,23 @@ class Card:
     def show_card(self):
         print("{}{}".format(self.value, self.suit))
 
-
 deck_num_1 = Deck()
-deck_num_1.build()
-deck_num_1.shuffle()
 
 player_1 = Player("Kevin", 1, turn=True, dealer=True)
-print("It's player ones turn and they are the dealer")
 player_2 = Player("Katrina", 2)
-print("There are two players")
-
 player_1.draw_card(deck_num_1)
-print("Player one drew a card")
-print(f"{player_1.name} has {[str(card.value) + card.suit for card in player_1.hand]} \n")
-print(f"whereas {player_2.name} has {[str(card.value) + card.suit for card in player_2.hand]}")
-for card in deck_num_1.cards:
-    print(f"This is the content of the deck: {card.value}{card.suit}")
 
- 
+
+print('Loading')
+for i in range(8):
+    time.sleep(.5)
+    sys.stdout.write('.')
+    sys.stdout.flush()
+print("\n")
+
+print("Hiya buddy! My name is Ace and I will be your dealer!")
+print("\n")
+
 
 # for item in deck.cards:
 #     print(f'card: {item.value} {item.suit} {item.color} {item.face_card}')
@@ -137,12 +141,4 @@ The totals need to be compared and a winner needs to be checked for
 import Random
 '''
 
-# deck.shuffle()
-# deck.show()
-
-# player = Player("Jeanine")
 # player.draw_card(deck).draw_card(deck).draw_card(deck).draw_card(deck).draw_card(deck)
-# player.show_hand()
-
-# card = deck.draw()
-# card.show()
