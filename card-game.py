@@ -3,101 +3,15 @@ import time
 import sys
 
 
-
-class Player:
-        
-        def __init__(self, name, number, turn = False, dealer = False):
-            self.dealer = dealer
-            self.number = number
-            self.name = name
-            self.turn = turn
-            self.score = {
-                "wins" : 0,
-                "losses" : 0,
-                "draws" : 0,
-                "purse" : 0,
-            }
-            self.hand = []
-
-        def draw_card(self, deck):
-            self.hand.append(deck.draw_from_deck())
-            return self
-
-        def show_hand(self):
-            hand_value = [card.show_card() for card in self.hand]
-            return hand_value
-
-        def discard_card(self, index):
-            # equal to 0 means there is a card in the hand
-            if 0 <= index < len(self.hand):
-                return self.hand.pop(index)
-            else:
-                print("Try Again")
-
-
-
-class Deck:
-        
-        def __init__(self, number_of_decks=1, trump = False):
-            self.trump = trump
-            self.cards = []
-            self.discard_pile = []
-            self.number_of_decks = number_of_decks
-            self.build()
-            self.shuffle()
-            self.shuffle()
-
-        def build(self):
-            for i in range(self.number_of_decks):
-                for suit in ["\u2660", "\u2663", "\u2665", "\u2666"]:
-                    for value in range(1, 14):
-                        face_card = False 
-                        if value == 1:
-                            face_card = True
-                            value = "A"
-                        elif value == 11:
-                            face_card = True
-                            value = "J"
-                        elif value == 12:
-                            face_card = True
-                            value = "Q"
-                        elif value == 13:
-                            face_card = True
-                            value = "K"
-                        self.cards.append(Card(value, suit, face_card))
-
-        def shuffle(self):
-            # First -1 means last card, 0 means decrementing towards 0 index, last -1 means 
-            random.shuffle(self.cards)  
-
-        def draw_from_deck(self):
-            #Pop acts as the top of the deck because it removes from the last item
-            return self.cards.pop()
-        
-        def show_top_card(self):
-            if self.cards:
-                # -1 is the top card because its the last card facing away from you
-                self.cards[-1].show_card()
-                self.determine_trump()
-            else:
-                print("The deck is empty. Reshuffle the discard")
-        
-        def determine_trump(self):
-                self.trump = self.cards[-1].suit
-
-        def add_to_discard(self, card):
-            self.discard_pile.append(card)
-
-
-
 class Card:
-        
+        # These are the relevant aspects of a card
         def __init__(self, value, suit, face_card = False):
             self.value = value
             self.face_card = face_card
             self.suit = suit
             self.color = ""
 
+            # Sets the card color based on suit
             if self.suit in ["\u2665", "\u2666"]: # Hearts or Diamonds
                 self.color = "\033[91m"
             elif self.suit in ["\u2660", "\u2663"]: # Spade or Clubs
@@ -105,10 +19,12 @@ class Card:
             else:
                 self.color = "\033[0m"
         
+        # This formats how the card is shown. Resets the color so text goes back to white
         def show_card(self):
             reset_color = "\033[0m"
             return "{}{}{}{}".format(self.color, self.value, self.suit, reset_color)
 
+        # Defines the value of face cards
         def get_value(self):
             if self.face_card == False:
                 return int(self.value)
@@ -123,9 +39,103 @@ class Card:
 
 
 
-class Game:
+class Player:
+        # Some of the params aren't used for highest card but can be used for other games once I add them
+        def __init__(self, name, number, turn = False, dealer = False):
+            self.dealer = dealer
+            self.number = number
+            self.name = name
+            self.turn = turn
+            self.score = {
+                "wins" : 0,
+                "losses" : 0,
+                "draws" : 0,
+                "purse" : 0,
+            }
+            self.hand = []
+        
+        # Appends to the hand list
+        def draw_card(self, deck):
+            self.hand.append(deck.draw_from_deck())
+            return self
 
-# These are functions that can be added to the Game Class most likely.
+        # Returns a list of values and suits, which is exactly what a hand would be
+        def show_hand(self):
+            hand_value = [card.show_card() for card in self.hand]
+            return hand_value
+
+        # If the list has an item, it can be discarded when this function is called
+        def discard_card(self, index):
+            # equal to 0 means there is a card in the hand
+            if 0 <= index < len(self.hand):
+                return self.hand.pop(index)
+            else:
+                print("There are no cards to discard")
+
+
+
+class Deck:
+        # Some of these params aren't used in highest card but can be used in more games when added
+        def __init__(self, number_of_decks=1, trump = False):
+            self.trump = trump # A lot of my favorite games rely on a trump card
+            self.cards = []
+            self.discard_pile = []
+            self.number_of_decks = number_of_decks
+            self.build()
+            self.shuffle()  # Double shuffle for good measure
+            self.shuffle()
+
+        # This builds the deck in a list. 
+        def build(self):
+            for i in range(self.number_of_decks):
+                # Loops through a group of 13 cards and gives them a suit
+                for suit in ["\u2660", "\u2663", "\u2665", "\u2666"]:
+                    # Value here is overridden by the get_value function. 
+                    # I am using the value as it's sequential order here for ease of conception
+                    for value in range(1, 14):
+                        face_card = False 
+                        if value == 1:
+                            face_card = True
+                            value = "A"
+                        elif value == 11:
+                            face_card = True
+                            value = "J"
+                        elif value == 12:
+                            face_card = True
+                            value = "Q"
+                        elif value == 13:
+                            face_card = True
+                            value = "K"
+                        # Creates the actual card object with all the specifics    
+                        self.cards.append(Card(value, suit, face_card))
+
+        def shuffle(self):
+            random.shuffle(self.cards)  
+
+        def draw_from_deck(self):
+            #Pop acts as the top of the deck because it removes from the last item (-1) as default
+            return self.cards.pop()
+        
+        def show_top_card(self):
+            if self.cards:
+                # -1 goes to the very end of the list. This is the top card because its the last card facing away from you
+                self.cards[-1].show_card()
+                self.determine_trump()
+            else:
+                print("The deck is empty. Reshuffle the discard")
+        
+        def determine_trump(self):
+                # Checks to see the value of the top cards suit
+                self.trump = self.cards[-1].suit
+
+        def add_to_discard(self, card):
+            self.discard_pile.append(card)
+
+
+
+# These functions can be added to the Game Class.
+
+# This creates the typing effect
 def slow_type(words):
     words += "\n"
     for char in words:
@@ -133,14 +143,16 @@ def slow_type(words):
           0.01, 0.02, 0.03, 0.04, 0.05,
           0.03, 0.02, 0.01, 0.03, 0.01
         ]))
+        # Used for output of print
         sys.stdout.write(char)
+        # Doesnt wait to finish buffering before writing
         sys.stdout.flush()
     time.sleep(.4)    
 
 def ready():
     slow_type("Are \033[36myou\033[0m ready to see who won? ")
     is_player_ready = input("")
-    return is_player_ready.casefold()
+    return is_player_ready.casefold() # Strongest version of case insensitivity that Python has
 
 def any_affirmative_answer(response):
     affirmative_words = [
@@ -148,10 +160,11 @@ def any_affirmative_answer(response):
     "count me in", "damn straight", "definitely", "defo", "fo sho", "for sure", "heck yea", "heck yes",
     "hell yea", "hell yes", "indeed", "indeedy", "most definitely", "of course", "oh yeah", "okay", "ok",
     "right", "righto", "sure", "sure thing", "sure thing bruh", "totally", "totally bro", "totally dude",
-    "totes ma goats", "uh-huh", "uh-huh", "y", "yea", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
+    "totes ma goats", "uh-huh", "uh-huh", "y", "yea", "yes", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
     "yeppers", "yep", "yep", "yep yep", "you bet", "you betcha", "you got it"
 ]
     case_insensitive_response = response.casefold()
+    # Boolean
     return case_insensitive_response in affirmative_words
 
 def determine_winner(dealer, player):
@@ -160,7 +173,7 @@ def determine_winner(dealer, player):
 
     winner = ""
     if dealer_card_value > player_card_value:
-        winner = "\033[32mI\033[0m"
+        winner = "\033[32mI\033[0m" # Color coded I
         dealer.score["wins"] += 1
         player.score["losses"] += 1
     elif dealer_card_value < player_card_value:
@@ -175,7 +188,8 @@ def determine_winner(dealer, player):
         winner = "\033[32mI\033[0m can't figure out who"    
     return winner
 
-# I wonder if this section can just be part of a start game function in the Game Class?
+# This section can just be part of a start game function in the Game Class. Need to rework the slow type function
+# The function was just expecting on parameter
 slow_type("Initializing Program...")
 slow_type('Loading')
 for i in range(3):
@@ -203,7 +217,7 @@ slow_type("So glad to meet \033[36myou\033[0m.")
 time.sleep(.4) 
 print("\n")
 
-# This would be the end of the start game function and wouldnt be part of the While loop.
+# This will be the end of the start game function and wont be part of the While loop.
 
 # This would be part of the Select Game and then Game Intro part
 slow_type(f"\033[1m\033[36m{entered_name}\033[0m, we are going to play a simple game called highest card.")
@@ -214,6 +228,7 @@ slow_type("Suit doesn't matter.")
 time.sleep(.4)
 print("\n")
 
+# Handles user input for random text and excessive numbers
 while True:
     try:
         slow_type("How many decks would \033[36myou\033[0m like to play with? ")        
@@ -231,67 +246,72 @@ while True:
         slow_type("That can't be right. That's not a number.")
         print("\n") 
 
+
+# Creates the players and the deck
 super_deck = Deck(deck_qty)
 player = Player(entered_name, 1)
 dealer = Player("Ace", 2)
 
+
 # This would be part of the While loop that keeps the game going
 def highest_card_game_play(dealer, player):
-    slow_type("Alright, now \033[32mI\033[0m am going to deal \033[36myou\033[0m a card")
-    
-    player.draw_card(super_deck)
-    dealer.draw_card(super_deck)
+            slow_type("Alright, now \033[32mI\033[0m am going to deal \033[36myou\033[0m a card")
+            
+            # Players get cards
+            player.draw_card(super_deck)
+            dealer.draw_card(super_deck)
 
-    time.sleep(.4)
-    print("\n")
+            time.sleep(.4)
+            print("\n")
 
-    slow_type(f"Ok \033[1m\033[36m{entered_name}\033[0m, go ahead and look at \033[36myour\033[0m card")
-    time.sleep(.4)
-    player_card = player.show_hand()
-    for bologna in player_card:
-        print(bologna)
-    print("\n")
+            # Player Card is displayed
+            slow_type(f"Ok \033[1m\033[36m{entered_name}\033[0m, go ahead and look at \033[36myour\033[0m card")
+            time.sleep(.4)
+            player_card = player.show_hand()
+            for bologna in player_card: # Named purely for my amusement
+                print(bologna)
+            print("\n")
+            
+            # User response is handled here with the list of acceptable responses
+            # There was a bug where the first response could be almost anything, but all other responses needed to match it.
+            user_response = ready()
+            while not any_affirmative_answer(user_response):
+                responses = ["Hurry up slowpoke", "What's taking so long?", "Need help or something", 
+                             "Ugh... Hurry!", "What's the hold up?", "Come on already...", 
+                             "We're aren't getting any younger", "Pick up the pace dude..."]
+                slow_type(random.choice(responses))
+                print("\n")
+                user_response = ready()
+            
+            # Dealer Card is shown
+            dealer_card = dealer.show_hand()
+            for folgers in dealer_card: # Named purely for my amusement
+                    print(folgers) 
+            print("\n")    
 
-    # There was a bug where the first response could be almost anything, but all other responses needed to match it.
-    user_response = ready()
-    while not any_affirmative_answer(user_response):
-        responses = ["Hurry up slowpoke", "What's taking so long?", "Need help or something", "Ugh... Hurry!", "What's the hold up?", "Come on already...", "We're aren't getting any younger", "Pick up the pace dude..."]
-        slow_type(random.choice(responses))
-        print("\n")
-        user_response = ready()
+            end_of_game = determine_winner(dealer, player)
 
-    dealer_card = dealer.show_hand()
-    for folgers in dealer_card:
-            print(folgers) 
-    print("\n")    
+            # The deck has to receive the card into it's discard before the player discards it from their hand, 
+            # otherwise it causes an error 
+            super_deck.add_to_discard(player.hand[0])
+            player.discard_card(0)
+            super_deck.add_to_discard(dealer.hand[0])
+            dealer.discard_card(0)
+            
+            # Displays the winning message
+            slow_type(f"\033[32mI\033[0m have {dealer_card[0]} and \033[36myou\033[0m have {player_card[0]}. It looks like {end_of_game} won!")
+            print("\n")
+            slow_type(f" Dealer Wins: \033[92m{dealer.score["wins"]}\033[0m, Losses: \033[31m{dealer.score["losses"]}\033[0m, and Draws: \033[33m{dealer.score["draws"]}\033[0m")
+            slow_type(f" {entered_name} Wins: \033[92m{player.score["wins"]}\033[0m, Losses: \033[31m{player.score["losses"]}\033[0m, and Draws: \033[33m{player.score["draws"]}\033[0m")
+            print("\n")
 
-    end_of_game = determine_winner(dealer, player)
-   
-    super_deck.add_to_discard(player.hand[0])
-    player.discard_card(0)
-    
-    super_deck.add_to_discard(dealer.hand[0])
-    dealer.discard_card(0)
-    
-    slow_type(f"\033[32mI\033[0m have {dealer_card[0]} and \033[36myou\033[0m have {player_card[0]}. It looks like {end_of_game} won!")
-    print("\n")
-    slow_type(f" Dealer Wins: \033[92m{dealer.score["wins"]}\033[0m, Losses: \033[31m{dealer.score["losses"]}\033[0m, and Draws: \033[33m{dealer.score["draws"]}\033[0m")
-    slow_type(f" {entered_name} Wins: \033[92m{player.score["wins"]}\033[0m, Losses: \033[31m{player.score["losses"]}\033[0m, and Draws: \033[33m{player.score["draws"]}\033[0m")
-    print("\n")
+            slow_type("Would you like to play again?")
+            play_again = any_affirmative_answer(input("").casefold())
+            return play_again
 
-    slow_type("Would you like to play again?")
-    play_again = input("").casefold()
-    return play_again
-
-play_again = "yes"
-while play_again == "yes":
+play_again = True
+while play_again:
     play_again = highest_card_game_play(dealer, player)
-
-
-import pytest
-from your_module_name import Player, Deck, Card, determine_winner
-
-
 
 # We could have a Would you like to play again?, Go to choose Game Screen, or just quit?
 # Each calling their own function 
@@ -301,20 +321,4 @@ from your_module_name import Player, Deck, Card, determine_winner
 # Clubs "\u2663"
 # Heart "\u2665"
 # Diamonds "\u2666"
-
-Calculate Hand
-Check for winner
-
-Thinking through the highest card game:
-The player and the dealer must each be dealt a card. 
-    Create a deal function
-The players need to know the value of their hand
-    Create a total function
-The round ends and they show their hands
-    Create a show function. Maybe add a command, ready to show?
-The totals need to be compared and a winner needs to be checked for
-
-import Random
 '''
-
-# player.draw_card(deck).draw_card(deck).draw_card(deck).draw_card(deck).draw_card(deck)
