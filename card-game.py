@@ -120,7 +120,10 @@ class Card:
                 return 12
             elif self.value == "J":
                 return 11
-            
+
+
+
+class Game:
 
 # These are functions that can be added to the Game Class most likely.
 def slow_type(words):
@@ -283,6 +286,11 @@ def highest_card_game_play(dealer, player):
 play_again = "yes"
 while play_again == "yes":
     play_again = highest_card_game_play(dealer, player)
+
+
+import pytest
+from your_module_name import Player, Deck, Card, determine_winner
+
 
 
 # We could have a Would you like to play again?, Go to choose Game Screen, or just quit?
