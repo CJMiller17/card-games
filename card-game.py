@@ -131,194 +131,192 @@ class Deck:
         def add_to_discard(self, card):
             self.discard_pile.append(card)
 
+class Game:
+        def slow_type(self, words):
+            words += "\n"
+            for char in words:
+                time.sleep(random.choice([
+                0.01, 0.02, 0.03, 0.04, 0.05,
+                0.03, 0.02, 0.01, 0.03, 0.01
+                ]))
+                # Used for output of print
+                sys.stdout.write(char)
+                # Doesnt wait to finish buffering before writing
+                sys.stdout.flush()
+            time.sleep(.4)    
 
+        def ready(self):
+            self.slow_type("Are \033[36myou\033[0m ready to see who won? ")
+            is_player_ready = input("")
+            return is_player_ready.casefold() # Strongest version of case insensitivity that Python has
 
-# These functions can be added to the Game Class.
+        def any_affirmative_answer(self, response):
+            affirmative_words = [
+            "absolutely", "absotootly", "affirm", "affirmative", "aye", "aye aye", "by all means", "certainly",
+            "count me in", "damn straight", "definitely", "defo", "fo sho", "for sure", "heck yea", "heck yes",
+            "hell yea", "hell yes", "indeed", "indeedy", "most definitely", "of course", "oh yeah", "okay", "ok",
+            "right", "righto", "sure", "sure thing", "sure thing bruh", "totally", "totally bro", "totally dude",
+            "totes ma goats", "uh-huh", "uh-huh", "y", "yea", "yes", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
+            "yeppers", "yep", "yep", "yep yep", "you bet", "you betcha", "you got it"
+        ]
+            case_insensitive_response = response.casefold()
+            # Boolean
+            return case_insensitive_response in affirmative_words
 
-# This creates the typing effect
-def slow_type(words):
-    words += "\n"
-    for char in words:
-        time.sleep(random.choice([
-          0.01, 0.02, 0.03, 0.04, 0.05,
-          0.03, 0.02, 0.01, 0.03, 0.01
-        ]))
-        # Used for output of print
-        sys.stdout.write(char)
-        # Doesnt wait to finish buffering before writing
-        sys.stdout.flush()
-    time.sleep(.4)    
-
-def ready():
-    slow_type("Are \033[36myou\033[0m ready to see who won? ")
-    is_player_ready = input("")
-    return is_player_ready.casefold() # Strongest version of case insensitivity that Python has
-
-def any_affirmative_answer(response):
-    affirmative_words = [
-    "absolutely", "absotootly", "affirm", "affirmative", "aye", "aye aye", "by all means", "certainly",
-    "count me in", "damn straight", "definitely", "defo", "fo sho", "for sure", "heck yea", "heck yes",
-    "hell yea", "hell yes", "indeed", "indeedy", "most definitely", "of course", "oh yeah", "okay", "ok",
-    "right", "righto", "sure", "sure thing", "sure thing bruh", "totally", "totally bro", "totally dude",
-    "totes ma goats", "uh-huh", "uh-huh", "y", "yea", "yes", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
-    "yeppers", "yep", "yep", "yep yep", "you bet", "you betcha", "you got it"
-]
-    case_insensitive_response = response.casefold()
-    # Boolean
-    return case_insensitive_response in affirmative_words
-
-def determine_winner(dealer, player):
-    dealer_card_value = dealer.hand[0].get_value()
-    player_card_value = player.hand[0].get_value()
-
-    winner = ""
-    if dealer_card_value > player_card_value:
-        winner = "\033[32mI\033[0m" # Color coded I
-        dealer.score["wins"] += 1
-        player.score["losses"] += 1
-    elif dealer_card_value < player_card_value:
-        winner = "you"
-        dealer.score["losses"] += 1
-        player.score["wins"] += 1
-    elif dealer_card_value == player_card_value:
-        winner = "neither of us"
-        dealer.score["draws"] += 1
-        player.score["draws"] += 1
-    else: 
-        winner = "\033[32mI\033[0m can't figure out who"    
-    return winner
-
-# This section can just be part of a start game function in the Game Class. Need to rework the slow type function
-# The function was just expecting on parameter
-slow_type("Initializing Program...")
-slow_type('Loading')
-for i in range(3):
-    time.sleep(.4)
-    sys.stdout.write('.')
-    sys.stdout.flush()
-print("\n")
-
-slow_type("Hiya buddy! \033[32mMy\033[0m name is \033[1m\033[32mAce\033[0m and \033[32mI\033[0m will be your dealer!")
-time.sleep(.4)
-print("\n")
-
-slow_type("What is your name?")
-entered_name = input("")
-time.sleep(.4)
-print("\n")
-
-greetings = ["Yo", "Hey there", "Greetings", "Sup", "Hi", "How it do", "Howdy", "Well \033[32mI'll\033[0m be. Hi"]
-welcome = random.choice(greetings)
-slow_type(f"{welcome} \033[1m\033[36m{entered_name}\033[0m!")
-time.sleep(.4)
-print("\n")
-
-slow_type("So glad to meet \033[36myou\033[0m.")
-time.sleep(.4) 
-print("\n")
-
-# This will be the end of the start game function and wont be part of the While loop.
-
-# This would be part of the Select Game and then Game Intro part
-slow_type(f"\033[1m\033[36m{entered_name}\033[0m, we are going to play a simple game called highest card.")
-time.sleep(.4)
-print("\n")
-
-slow_type("Suit doesn't matter.")
-time.sleep(.4)
-print("\n")
-
-# Handles user input for random text and excessive numbers
-while True:
-    try:
-        slow_type("How many decks would \033[36myou\033[0m like to play with? ")        
-        deck_qty = int(input(""))
-        if deck_qty == 0:
-            slow_type("Wrong Choice. \033[36mYou'll\033[0m just get 1 deck")
-            deck_qty = 1
-        elif deck_qty > 999:
-            slow_type("We don't have that many. How about 10? Because that's what \033[36myou're\033[0m going to get")
-            deck_qty = 10
-        time.sleep(.4)
-        print("\n")
-        break
-    except:
-        slow_type("That can't be right. That's not a number.")
-        print("\n") 
-
-
-# Creates the players and the deck
-super_deck = Deck(deck_qty)
-player = Player(entered_name, 1)
-dealer = Player("Ace", 2)
-
-
-# This would be part of the While loop that keeps the game going
-def highest_card_game_play(dealer, player):
-            slow_type("Alright, now \033[32mI\033[0m am going to deal \033[36myou\033[0m a card")
-            
-            # Players get cards
-            player.draw_card(super_deck)
-            dealer.draw_card(super_deck)
-
+        def highest_card_game_intro(self):
+            self.deck_qty = 1
+            while True:
+                try:
+                    self.slow_type("How many decks would \033[36myou\033[0m like to play with? ")        
+                    deck_qty = int(input(""))
+                    if deck_qty == 0:
+                        self.slow_type("Wrong Choice. \033[36mYou'll\033[0m just get 1 deck")
+                        self.deck_qty = 1
+                    elif deck_qty > 999:
+                        self.slow_type("We don't have that many. How about 10? Because that's what \033[36myou're\033[0m going to get")
+                        self.deck_qty = 10
+                    time.sleep(.4)
+                    print("\n")
+                    break
+                except:
+                    self.slow_type("That can't be right. That's not a number.")
+                    print("\n") 
+            self.super_deck = Deck(self.deck_qty)
+            self.player = Player(self.entered_name, 1)
+            self.dealer = Player("Ace", 2)
+            self.slow_type(f"\033[1m\033[36m{self.entered_name}\033[0m, we are going to play a simple game called highest card.")
             time.sleep(.4)
             print("\n")
 
-            # Player Card is displayed
-            slow_type(f"Ok \033[1m\033[36m{entered_name}\033[0m, go ahead and look at \033[36myour\033[0m card")
+            self.slow_type("Suit doesn't matter.")
             time.sleep(.4)
-            player_card = player.show_hand()
-            for bologna in player_card: # Named purely for my amusement
-                print(bologna)
-            print("\n")
-            
-            # User response is handled here with the list of acceptable responses
-            # There was a bug where the first response could be almost anything, but all other responses needed to match it.
-            user_response = ready()
-            while not any_affirmative_answer(user_response):
-                responses = ["Hurry up slowpoke", "What's taking so long?", "Need help or something", 
-                             "Ugh... Hurry!", "What's the hold up?", "Come on already...", 
-                             "We're aren't getting any younger", "Pick up the pace dude..."]
-                slow_type(random.choice(responses))
-                print("\n")
-                user_response = ready()
-            
-            # Dealer Card is shown
-            dealer_card = dealer.show_hand()
-            for folgers in dealer_card: # Named purely for my amusement
-                    print(folgers) 
-            print("\n")    
-
-            end_of_game = determine_winner(dealer, player)
-
-            # The deck has to receive the card into it's discard before the player discards it from their hand, 
-            # otherwise it causes an error 
-            super_deck.add_to_discard(player.hand[0])
-            player.discard_card(0)
-            super_deck.add_to_discard(dealer.hand[0])
-            dealer.discard_card(0)
-            
-            # Displays the winning message
-            slow_type(f"\033[32mI\033[0m have {dealer_card[0]} and \033[36myou\033[0m have {player_card[0]}. It looks like {end_of_game} won!")
-            print("\n")
-            slow_type(f" Dealer Wins: \033[92m{dealer.score["wins"]}\033[0m, Losses: \033[31m{dealer.score["losses"]}\033[0m, and Draws: \033[33m{dealer.score["draws"]}\033[0m")
-            slow_type(f" {entered_name} Wins: \033[92m{player.score["wins"]}\033[0m, Losses: \033[31m{player.score["losses"]}\033[0m, and Draws: \033[33m{player.score["draws"]}\033[0m")
             print("\n")
 
-            slow_type("Would you like to play again?")
-            play_again = any_affirmative_answer(input("").casefold())
-            return play_again
+            # Handles user input for random text and excessive numbers
 
-play_again = True
-while play_again:
-    play_again = highest_card_game_play(dealer, player)
 
-# We could have a Would you like to play again?, Go to choose Game Screen, or just quit?
-# Each calling their own function 
+            # Creates the players and the deck
+        
 
-'''
-# Spade "\u2660"
-# Clubs "\u2663"
-# Heart "\u2665"
-# Diamonds "\u2666"
-'''
+
+    # This would be part of the While loop that keeps the game going
+        def highest_card_game_play(self):
+                    self.slow_type("Alright, now \033[32mI\033[0m am going to deal \033[36myou\033[0m a card")
+                    
+                    # Players get cards
+                    self.player.draw_card(self.super_deck)
+                    self.dealer.draw_card(self.super_deck)
+
+                    time.sleep(.4)
+                    print("\n")
+
+                    # Player Card is displayed
+                    self.slow_type(f"Ok \033[1m\033[36m{self.entered_name}\033[0m, go ahead and look at \033[36myour\033[0m card")
+                    time.sleep(.4)
+                    player_card = self.player.show_hand()
+                    for bologna in player_card: # Named purely for my amusement
+                        print(bologna)
+                    print("\n")
+                    
+                    # User response is handled here with the list of acceptable responses
+                    # There was a bug where the first response could be almost anything, but all other responses needed to match it.
+                    user_response = self.ready()
+                    while not self.any_affirmative_answer(user_response):
+                        responses = ["Hurry up slowpoke", "What's taking so long?", "Need help or something", 
+                                    "Ugh... Hurry!", "What's the hold up?", "Come on already...", 
+                                    "We're aren't getting any younger", "Pick up the pace dude..."]
+                        self.slow_type(random.choice(responses))
+                        print("\n")
+                        user_response = self.ready()
+                    
+                    # Dealer Card is shown
+                    dealer_card = self.dealer.show_hand()
+                    for folgers in dealer_card: # Named purely for my amusement
+                            print(folgers) 
+                    print("\n")    
+
+                    end_of_game = self.determine_winner(self.dealer, self.player)
+
+                    # The deck has to receive the card into it's discard before the player discards it from their hand, 
+                    # otherwise it causes an error 
+                    self.super_deck.add_to_discard(self.player.hand[0])
+                    self.player.discard_card(0)
+                    self.super_deck.add_to_discard(self.dealer.hand[0])
+                    self.dealer.discard_card(0)
+                    
+                    # Displays the winning message
+                    self.slow_type(f"\033[32mI\033[0m have {dealer_card[0]} and \033[36myou\033[0m have {player_card[0]}. It looks like {end_of_game} won!")
+                    print("\n")
+                    self.slow_type(f" Dealer Wins: \033[92m{self.dealer.score["wins"]}\033[0m, Losses: \033[31m{self.dealer.score["losses"]}\033[0m, and Draws: \033[33m{self.dealer.score["draws"]}\033[0m")
+                    self.slow_type(f" {self.entered_name} Wins: \033[92m{self.player.score["wins"]}\033[0m, Losses: \033[31m{self.player.score["losses"]}\033[0m, and Draws: \033[33m{self.player.score["draws"]}\033[0m")
+                    print("\n")
+
+                    self.slow_type("Would you like to play again?")
+                    play_again = self.any_affirmative_answer(input("").casefold())
+                    return play_again
+        def determine_winner(self, dealer, player):
+            dealer_card_value = dealer.hand[0].get_value()
+            player_card_value = player.hand[0].get_value()
+
+            winner = ""
+            if dealer_card_value > player_card_value:
+                winner = "\033[32mI\033[0m" # Color coded I
+                dealer.score["wins"] += 1
+                player.score["losses"] += 1
+            elif dealer_card_value < player_card_value:
+                winner = "you"
+                dealer.score["losses"] += 1
+                player.score["wins"] += 1
+            elif dealer_card_value == player_card_value:
+                winner = "neither of us"
+                dealer.score["draws"] += 1
+                player.score["draws"] += 1
+            else: 
+                winner = "\033[32mI\033[0m can't figure out who"    
+            return winner
+
+        # This section can just be part of a start game function in the Game Class. Need to rework the slow type function
+        # The function was just expecting on parameter
+        def __init__(self):
+            self.player = None
+            self.dealer = None
+            self.slow_type("Initializing Program...")
+            self.slow_type('Loading')
+            for i in range(3):
+                time.sleep(.4)
+                sys.stdout.write('.')
+                sys.stdout.flush()
+            print("\n")
+
+            self.slow_type("Hiya buddy! \033[32mMy\033[0m name is \033[1m\033[32mAce\033[0m and \033[32mI\033[0m will be your dealer!")
+            time.sleep(.4)
+            print("\n")
+
+            self.slow_type("What is your name?")
+            self.entered_name = input("")
+            time.sleep(.4)
+            print("\n")
+
+            greetings = ["Yo", "Hey there", "Greetings", "Sup", "Hi", "How it do", "Howdy", "Well \033[32mI'll\033[0m be. Hi"]
+            welcome = random.choice(greetings)
+            self.slow_type(f"{welcome} \033[1m\033[36m{self.entered_name}\033[0m!")
+            time.sleep(.4)
+            print("\n")
+
+            self.slow_type("So glad to meet \033[36myou\033[0m.")
+            time.sleep(.4) 
+            print("\n")
+            self.highest_card_game_intro()
+            play_again = True
+            while play_again:
+                play_again = self.highest_card_game_play()
+
+            # This will be the end of the start game function and wont be part of the While loop.
+
+            # This would be part of the Select Game and then Game Intro part
+
+Game()
+
+
+        # We could have a Would you like to play again?, Go to choose Game Screen, or just quit?
+        # Each calling their own function 
