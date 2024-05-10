@@ -145,7 +145,7 @@ def any_affirmative_answer(response):
     "count me in", "damn straight", "definitely", "defo", "fo sho", "for sure", "heck yea", "heck yes",
     "hell yea", "hell yes", "indeed", "indeedy", "most definitely", "of course", "oh yeah", "okay", "ok",
     "right", "righto", "sure", "sure thing", "sure thing bruh", "totally", "totally bro", "totally dude",
-    "totes ma goats", "uh-huh", "uh-huh", "yea", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
+    "totes ma goats", "uh-huh", "uh-huh", "y", "yea", "yea sure", "yeah", "yeah buddy", "yass", "yasss", "yea",
     "yeppers", "yep", "yep", "yep yep", "you bet", "you betcha", "you got it"
 ]
     case_insensitive_response = response.casefold()
