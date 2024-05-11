@@ -161,7 +161,7 @@ class Game:
         ]
             case_insensitive_response = response.casefold()
             # Boolean
-            return case_insensitive_response in affirmative_words
+            return case_insensitive_response in affirmative_words # Does this loop through the individual words? Like heck?
 
         def highest_card_game_intro(self):
             self.deck_qty = 1
